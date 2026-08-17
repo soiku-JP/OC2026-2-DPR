@@ -318,7 +318,20 @@ const save = loadSave();
    その人はまだ安全確認を見ていません。ここで進行中の画面に切り替えると、
    安全確認のカードごと隠れてしまい、二度と出てこなくなります。
    安全確認が未了なら、下の説明カード（安全確認つき）をそのまま出します。 */
-if (save.startedAt && save.safetyDone) {
+/* ★②と③のあいだで開き直した人（安全確認は済み、順路はまだ）。
+   -----------------------------------------------------------
+   ここを分けないと、下の「進行中」の画面が出ます。そこには
+   save.route の既定値がそのまま出るので、順路を受け取っていない人に
+   「Aルートの1か所目へ進んでください」と表示してしまいます。
+   本人はAとは言われていないのに、画面がAだと言い切る状態でした。 */
+if (save.startedAt && save.safetyDone && !save.routeSet) {
+  const sb = document.getElementById('safetyBlock');
+  if (sb) sb.style.display = 'none';         // 済んだものは出しません
+  document.getElementById('startCard').style.display = 'block';
+  document.getElementById('startBlock').style.display = 'block';
+  document.getElementById('resumeCard').style.display = 'none';
+  showAwaitRoute();
+} else if (save.startedAt && save.safetyDone) {
   /* 説明のカードより上に「進行中」を出します。
      途中の人に、ロゲイニングの説明を読み直させないためです。 */
   document.getElementById('startCard').style.display = 'none';
