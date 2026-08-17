@@ -1,0 +1,712 @@
+/* ===========================================================
+   style.css  スマホ画面を前提にした見た目の設定
+   -----------------------------------------------------------
+   明るい配色にしています。理由は2つ。
+   ・屋外（CP3 かまどベンチ）でも画面が見やすい
+   ・高校生向けに、かたい印象にならないように
+   色を変えたいときは、下の :root の値だけ書き換えてください。
+   =========================================================== */
+
+:root {
+  --bg: #fbf8f3;          /* 全体の背景（あたたかい白） */
+  --panel: #ffffff;       /* カードの背景 */
+  --panel2: #fdfaf5;      /* 選択肢などの背景 */
+  --line: #e7e0d5;        /* 罫線 */
+  --text: #1f2430;        /* 本文。※すべての読ませたい文字はこの濃さで出します */
+  --muted: #4c5566;       /* ラベル・注記だけに使う色。本文には使いません */
+  --accent: #ff8a3d;      /* オレンジ（メイン） */
+  --accent-dark: #d9600f;
+  --accent-soft: #fff1e4; /* オレンジの薄い背景 */
+  --ok: #2fa76f;          /* 正解の緑 */
+  --ok-soft: #e6f6ee;
+  --ng: #e05a5a;          /* まちがいの赤 */
+  --ng-soft: #fdeceb;
+  --hint: #f2b705;        /* ヒントの黄 */
+  --hint-soft: #fff6dd;
+  --blue: #3f7fc4;        /* 階段マークなど */
+  /* チェックポイントごとの色。checkpoint.js が data.js の theme で上書きします。
+     画像を増やさずに「場所ごとの表情」をつけるための仕掛けです。 */
+  --cp: #d9600f;
+  --cp-soft: #fff1e4;
+  --radius: 20px;
+  --shadow: 0 2px 10px rgba(47, 53, 66, .07);
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+body {
+  margin: 0;
+  padding: 0 0 48px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Hiragino Maru Gothic ProN",
+               "Hiragino Sans", "Noto Sans JP", "Yu Gothic", Meiryo, sans-serif;
+  line-height: 1.8;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap { max-width: 560px; margin: 0 auto; padding: 14px; }
+
+/* ヘッダー ------------------------------------------------ */
+header.bar {
+  position: sticky; top: 0; z-index: 10;
+  background: rgba(251, 248, 243, .93);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+  padding: 10px 16px;
+  display: flex; align-items: center; gap: 10px;
+}
+header.bar .logo { font-weight: 800; letter-spacing: .02em; font-size: 15px; }
+header.bar .spacer { flex: 1; }
+header.bar .timer {
+  font-variant-numeric: tabular-nums;
+  background: #fff; border: 1px solid var(--line); color: var(--muted);
+  padding: 3px 12px; border-radius: 999px; font-size: 14px;
+}
+header.bar .timer.over { color: var(--ng); border-color: var(--ng); }
+
+/* スタート画面のトップ画像 -------------------------------- */
+.hero {
+  position: relative; margin: 14px 0 0;
+  border-radius: var(--radius); overflow: hidden;
+  /* マスコットを置くぶん、少し高くしてあります（文字と重ねないため） */
+  min-height: 300px; display: flex; align-items: flex-end;
+  box-shadow: var(--shadow);
+  background-image:
+    linear-gradient(180deg, rgba(24,28,38,.25) 0%, rgba(24,28,38,.62) 45%, rgba(24,28,38,.92) 100%),
+    url('../img/ui/hero.jpg');
+  background-size: cover; background-position: center 38%;
+  color: #fff;
+}
+.hero-text { padding: 18px 20px; text-align: center; width: 100%; }
+.hero-sub { margin: 0 0 4px; font-size: 13px; font-weight: 700; color: #fff;
+  letter-spacing: .08em; text-shadow: 0 1px 8px rgba(0,0,0,.65); }
+.hero-title {
+  margin: 0 0 6px; font-size: 28px; font-weight: 800; letter-spacing: .02em;
+  text-shadow: 0 2px 14px rgba(0,0,0,.5);
+}
+/* 企画表題の後半。折り返さないよう、画面の幅に合わせて文字を縮めます */
+.hero-tag {
+  margin: 0 0 8px; font-weight: 800; line-height: 1.6;
+  font-size: min(4.2vw, 17px); white-space: nowrap;
+  color: #ffd7b0; text-shadow: 0 1px 8px rgba(0,0,0,.7);
+}
+/* 見出しと同じく、折り返さないよう画面の幅に合わせて縮めます */
+.hero-lead {
+  margin: 0; line-height: 1.75; color: #fbf6f0;
+  font-size: min(3.4vw, 14px); white-space: nowrap;
+  text-shadow: 0 1px 8px rgba(0,0,0,.6);
+}
+
+/* カード -------------------------------------------------- */
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 20px 18px;
+  margin: 14px 0;
+  box-shadow: var(--shadow);
+  animation: rise .32s ease both;
+}
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+/* スタート画面だけ、カードを少しずつ遅らせて出す（1回きり・0.1秒差） */
+.wrap.stagger > .card:nth-of-type(2) { animation-delay: .06s; }
+.wrap.stagger > .card:nth-of-type(3) { animation-delay: .12s; }
+.wrap.stagger > .card:nth-of-type(4) { animation-delay: .18s; }
+.wrap.stagger > .card:nth-of-type(5) { animation-delay: .24s; }
+
+h1 { font-size: 22px; margin: 4px 0 6px; letter-spacing: .01em; }
+/* 説明カードから「出発」へ切り替わる合図の見出し */
+.gostart {
+  font-size: 20px; color: var(--accent-dark); margin: 0 0 10px;
+  letter-spacing: .02em;
+}
+h2 { font-size: 17px; margin: 0 0 12px; }
+.lead { color: var(--text); font-size: 14px; margin: 0 0 14px; }
+.place {
+  display: inline-block; color: var(--cp); font-size: 12px; font-weight: 700;
+  background: var(--cp-soft); padding: 3px 12px; border-radius: 999px; margin: 0 0 8px;
+}
+/* チェックポイントの絵文字。画像ではないので通信は増えません */
+.cpemoji { font-size: 30px; line-height: 1; margin: 0 0 2px; }
+/* カードの上端に、その場所の色を1本 */
+.card.themed { border-top: 4px solid var(--cp); }
+
+#cpDesc { white-space: pre-line; }   /* data.js の改行をそのまま表示する */
+
+.photos { display: grid; gap: 8px; }
+.photos.two { grid-template-columns: 1fr 1fr; }
+
+img.photo {
+  width: 100%; display: block;
+  max-height: 38vh; object-fit: cover; object-position: center;
+  border-radius: 14px; background: #f1ece4;
+}
+.photos.two img.photo { max-height: 26vh; }
+
+/* ボタン -------------------------------------------------- */
+.btn {
+  display: block; width: 100%;
+  padding: 16px; margin: 12px 0 0;
+  font-size: 17px; font-weight: 800; letter-spacing: .02em;
+  color: #43220a; background: var(--accent);
+  border: none; border-radius: 999px; cursor: pointer;
+  text-align: center; text-decoration: none;
+  font-family: inherit;
+  box-shadow: 0 4px 0 var(--accent-dark);
+  transition: transform .08s, box-shadow .08s;
+}
+.btn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--accent-dark); }
+.btn.sub {
+  background: #fff; color: var(--text);
+  border: 1.5px solid var(--line); font-weight: 700; font-size: 15px;
+  box-shadow: none;
+}
+.btn.sub:active { transform: translateY(1px); }
+/* 安全確認が終わるまでは薄く出す。
+   ※押せなくはしません。何かの拍子に処理が失敗しても、必ず先へ進めるようにするためです。 */
+.btn.notready { opacity: .45; box-shadow: 0 4px 0 #c9c0b2; background: #d9d2c6; color: #5a5348; }
+.checkcount { font-size: 14px; font-weight: 800; margin: 10px 0 0; color: var(--accent-dark); }
+.checkcount.done { color: var(--ok); }
+/* 受付で決まった順路の表示 */
+.routefixed {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--accent-soft); border: 2px solid var(--accent);
+  border-radius: 16px; padding: 12px 14px; margin: 0 0 12px;
+}
+.routefixed .big { font-size: 22px; font-weight: 800; color: var(--accent-dark); white-space: nowrap; }
+.routefixed .ord { font-size: 13px; font-weight: 700; }
+
+input[type="text"] {
+  width: 100%; padding: 14px 16px; font-size: 17px;
+  background: #fff; color: var(--text);
+  border: 1.5px solid var(--line); border-radius: 14px;
+  font-family: inherit;
+}
+input[type="text"]:focus { outline: none; border-color: var(--accent); }
+
+/* マスコットのふきだし ------------------------------------ */
+.speech { display: flex; align-items: flex-start; gap: 10px; margin: 0 0 6px; }
+.speech img {
+  width: 62px; height: 62px; flex: 0 0 62px;
+  border-radius: 50%; background: var(--accent-soft);
+  /* 顔が切れないよう、はみ出しを切らずに収めます */
+  object-fit: contain;
+}
+/* 2体そろった絵（実写・イラスト）は、丸く切ると何か分からなくなるので
+   横長のまま大きめに出します。data.js の mascot.◯◯.wide で切り替えます。 */
+.speech.wide { align-items: center; }
+.speech.wide img {
+  width: 116px; height: auto; flex: 0 0 116px;
+  border-radius: 0; background: none;
+}
+@media (max-width: 360px) {
+  .speech.wide img { width: 92px; flex-basis: 92px; }
+}
+.speech .bubble {
+  position: relative; flex: 1;
+  background: var(--accent-soft); border-radius: 16px;
+  padding: 12px 14px; font-size: 15px; line-height: 1.75;
+}
+.speech .bubble::before {
+  content: ''; position: absolute; left: -7px; top: 22px;
+  border: 7px solid transparent; border-right-color: var(--accent-soft); border-left: 0;
+}
+
+/* 安全チェック -------------------------------------------- */
+.checklist { display: grid; gap: 10px; margin: 4px 0 0; }
+.checkitem {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 13px 14px; cursor: pointer;
+  background: var(--panel2); border: 2px solid var(--line);
+  border-radius: 16px; font-size: 15px; line-height: 1.65;
+  transition: background .15s, border-color .15s;
+  text-align: left; width: 100%; font-family: inherit; color: var(--text);
+}
+.checkitem .box {
+  flex: 0 0 26px; width: 26px; height: 26px; margin-top: 2px;
+  border: 2px solid #ccc3b5; border-radius: 8px; background: #fff;
+  display: grid; place-items: center; color: #fff; font-size: 15px; font-weight: 800;
+  transition: background .15s, border-color .15s;
+}
+.checkitem.on { background: var(--ok-soft); border-color: var(--ok); }
+.checkitem.on .box { background: var(--ok); border-color: var(--ok); }
+.checkitem .txt strong { display: block; font-size: 15.5px; }
+.checkitem .txt span { color: var(--text); font-size: 13.5px; }
+
+/* クイズ -------------------------------------------------- */
+.choice {
+  display: block; width: 100%; text-align: left;
+  padding: 15px 16px; margin: 10px 0;
+  font-size: 16px; line-height: 1.6;
+  background: var(--panel2); color: var(--text);
+  border: 2px solid var(--line); border-radius: 16px; cursor: pointer;
+  font-family: inherit;
+  transition: border-color .15s, background .15s, transform .08s;
+}
+.choice:active:not(:disabled) { transform: scale(.99); }
+.choice:disabled { cursor: default; }
+.choice.correct { border-color: var(--ok); background: var(--ok-soft); font-weight: 700; }
+.choice.wrong   { border-color: var(--ng); background: var(--ng-soft); }
+/* まちがえて消えた選択肢（正解はまだ見せない） */
+.choice.eliminated {
+  opacity: 1; color: #6b7280; background: #f0ebe3; text-decoration: line-through;
+  border-color: var(--line); background: #f4f1eb;
+}
+
+.hint {
+  background: var(--hint-soft); border-left: 4px solid var(--hint);
+  padding: 13px 15px; border-radius: 0 14px 14px 0;
+  font-size: 15px; color: #6b5400;
+}
+
+.result-msg { font-weight: 800; font-size: 18px; margin: 16px 0 8px; }
+.result-msg.ok { color: var(--ok); }
+.result-msg.ng { color: var(--ng); }
+.explain {
+  white-space: pre-line;
+  background: #f4f6fa; border-left: 4px solid var(--blue);
+  padding: 13px 15px; border-radius: 0 14px 14px 0;
+  font-size: 15px; color: #40506b;
+}
+
+/* ルート選択 ---------------------------------------------- */
+.routepick { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.routebtn {
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 14px 10px; cursor: pointer;
+  background: var(--panel2); color: var(--text);
+  border: 2px solid var(--line); border-radius: 16px; text-align: center;
+  font-family: inherit;
+}
+.routebtn.on { border-color: var(--accent); background: var(--accent-soft); }
+.routebtn .rname { font-weight: 800; font-size: 16px; }
+.routebtn .rorder { font-size: 11px; color: var(--text); line-height: 1.5; letter-spacing: -.02em; }
+.routebtn.on .rorder { color: var(--accent-dark); }
+
+/* つぎに行く場所 ------------------------------------------ */
+.next-card { border: 2px solid var(--accent); background: var(--accent-soft); }
+.next-card h2 { font-size: 15px; color: var(--accent-dark); }
+/* ★ .mascotart と .nexthead は横並びなので、この縦並びの指定から外します
+      （外し忘れると、マスコットが右端に寄ります） */
+#nextText, .next-card > div:not(.mascotart):not(.nexthead) {
+  display: flex; flex-direction: column; gap: 2px;
+}
+/* 見出しの行。右はしにマスコットを1体置きます */
+.nexthead { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0 0 8px; }
+.nexthead h2 { margin: 0; }
+.nexthead .mascotart { margin: 0; }
+.steplabel { font-size: 12px; color: var(--accent-dark); font-weight: 800; }
+.nextname { font-size: 22px; font-weight: 800; line-height: 1.35; }
+.nextplace { font-size: 15px; color: var(--text); }
+/* 「着いたら何をするか」。必ず地図の“あと”に置きます（行き方を知る前に読ませない） */
+.nextdo {
+  font-size: 14.5px; color: var(--accent-dark); font-weight: 700;
+  background: #fff; border: 1.5px solid var(--accent);
+  border-radius: 12px; padding: 10px 13px; margin: 10px 0 0;
+}
+.nextstep { font-size: 13px; font-weight: 800; color: var(--accent-dark); margin-top: 4px; }
+.next-card.goal-card { border-color: var(--ok); background: var(--ok-soft); }
+.next-card.goal-card h2, .next-card.goal-card .steplabel { color: var(--ok); }
+.next-card.goal-card .nextplace { color: var(--text); }
+
+/* 平面図 -------------------------------------------------- */
+.mapwrap { position: relative; margin-top: 10px; line-height: 0; }
+.mapimg {
+  width: 100%; height: auto; display: block;
+  border-radius: 14px; border: 1px solid var(--line); background: #fff;
+}
+.pin {
+  position: absolute; transform: translate(-50%, -50%);
+  width: 34px; height: 34px; border-radius: 50%;
+  display: grid; place-items: center;
+  font-size: 15px; font-weight: 800; line-height: 1;
+  border: 3px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.2);
+}
+.pin.target { background: var(--accent); color: #fff; box-shadow: 0 0 0 6px rgba(255,138,61,.25); }
+.pin.dim { background: #8a8073; color: #fff; width: 26px; height: 26px; font-size: 13px; }
+/* 出発時に「最終目的地」を示す青い丸（説明文の『青い丸』と対応） */
+.pin.lastpin { background: var(--blue); color: #fff; box-shadow: 0 0 0 6px rgba(63,127,196,.22); }
+.pin.stairs {
+  background: var(--blue); color: #fff;
+  width: auto; height: auto; padding: 3px 9px; border-radius: 999px;
+  font-size: 12px; white-space: nowrap; border-width: 2px;
+}
+.pin.goalpin {
+  width: auto; height: auto; padding: 5px 12px; border-radius: 999px;
+  font-size: 13px; white-space: nowrap;
+}
+/* どの階にもある目印。全フロアで同じ色にそろえています */
+.pin.atrium {
+  background: #f2b705; color: #4a3800;
+  width: auto; height: auto; padding: 3px 9px; border-radius: 999px;
+  font-size: 12px; white-space: nowrap; border-width: 2px;
+}
+/* ゴール（ホーム）を、目的地でないときに薄く出す */
+.pin.homepin {
+  background: #fff; color: var(--text); border: 2px solid #9a9182;
+  width: auto; height: auto; padding: 3px 9px; border-radius: 999px;
+  font-size: 12px; white-space: nowrap;
+}
+.maptag {
+  display: inline-block; background: var(--accent); color: #fff;
+  font-size: 11px; font-weight: 800; letter-spacing: .04em;
+  padding: 2px 8px; border-radius: 999px; margin-right: 8px;
+  vertical-align: 1px;
+}
+.mapnote { font-size: 12px; }
+/* 混雑しやすいCPで「見たらすぐ移動」を伝える帯 */
+.movenote {
+  margin: 4px 0 12px; padding: 11px 14px;
+  background: var(--accent-soft); border: 1.5px solid var(--accent);
+  border-radius: 14px; color: var(--accent-dark);
+  font-size: 14.5px; font-weight: 700; line-height: 1.7;
+}
+.mapcap { font-size: 13.5px; color: var(--text); margin: 8px 0 0; line-height: 1.7; }
+.mapfloor { margin: 0 0 22px; }
+.mapfloor h3 { font-size: 16px; margin: 0 0 4px; }
+.walkwarn {
+  margin-top: 10px; padding: 9px 12px; border-radius: 12px;
+  background: #fff; border: 1.5px dashed var(--accent);
+  color: var(--accent-dark); font-size: 13px; text-align: center; font-weight: 700;
+}
+
+/* 進捗 ---------------------------------------------------- */
+.progress { display: flex; gap: 4px; flex-wrap: wrap; margin: 4px 0 0; align-items: center; }
+.progress .arrow { color: #8a8073; font-size: 14px; }
+.dot {
+  width: 40px; height: 40px; border-radius: 50%;
+  display: grid; place-items: center;
+  border: 2px solid var(--line); background: #fff;
+  color: var(--text); font-weight: 800; font-size: 15px;
+}
+.dot.done { border-color: var(--ok); background: var(--ok); color: #fff; }
+.dot.next { border-color: var(--accent); color: var(--accent-dark); background: var(--accent-soft); }
+
+/* あいことば（シールのように） ------------------------------ */
+.letters { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.letter {
+  width: 46px; height: 54px; border-radius: 12px;
+  display: grid; place-items: center; font-size: 25px; font-weight: 800;
+  border: 2px dashed #c2b8a6; color: #8a8073; background: #fdfbf7;
+}
+.letter.got {
+  border: 2px solid var(--accent); color: #fff; background: var(--accent);
+  box-shadow: 0 2px 0 var(--accent-dark);
+  animation: pop .34s cubic-bezier(.2,1.4,.5,1) both;
+}
+@keyframes pop { from { transform: scale(.6); opacity: 0; } to { opacity: 1; } }
+
+#rewardLetter { animation: pop .4s cubic-bezier(.2,1.4,.5,1) both; }
+
+/* あと何文字か。集まるほどバーが伸びます（1回きりのトランジション） */
+.lettersbar {
+  height: 8px; border-radius: 999px; background: #ece5da;
+  margin: 12px 0 0; overflow: hidden;
+}
+.lettersbar > span {
+  display: block; height: 100%; width: 0;
+  background: linear-gradient(90deg, #ffb774, var(--accent));
+  border-radius: 999px; transition: width .6s cubic-bezier(.2,.8,.3,1);
+}
+
+.note { font-size: 14px; color: var(--text); line-height: 1.8; }
+/* 中身が入らなかった注記（showTimer が false のときの時計の案内など）は、
+   すき間だけが残らないように消します */
+.note:empty { display: none; }
+
+/* ※の注記をまとめる箱 ---------------------------------------
+   「やりかた」は本文（1〜6の手順）と注記が続けて並ぶため、
+   そのままだと、どこまでが手順かが読み取りにくくなります。
+   ・左に細い線を引いて、ひとかたまりに見せる
+   ・行頭の ※ をぶら下げて、2行目以降を文字の位置にそろえる
+   の2つで、本文と区別します。 */
+.notes {
+  margin-top: 16px;
+  padding-left: 12px;
+  border-left: 3px solid var(--line);
+}
+.notes .note { margin: 8px 0; padding-left: 1.35em; text-indent: -1.35em; }
+.notes .note:first-child { margin-top: 0; }
+.notes .note:last-child { margin-bottom: 0; }
+.center { text-align: center; }
+ol.rules { padding-left: 1.2em; font-size: 15px; }
+ol.rules li { margin: 9px 0; }
+
+/* トップ画像（キャンパス写真）の上に立たせるマスコット。
+   写真は暗いので、白いふちの影をつけて浮かせます。 */
+.hero-mascot { position: absolute; top: 12px; right: 12px; z-index: 2; pointer-events: none; }
+.hero-mascot img {
+  height: 88px; width: auto; display: block;
+  filter: drop-shadow(0 3px 7px rgba(0, 0, 0, .5));
+}
+@media (max-width: 360px) { .hero-mascot img { height: 72px; } }
+
+/* 飾りのマスコット（ふきだしではないほう） ------------------
+   すべての画面のどこかに1体はいるようにしています。
+   通信量を増やさないよう、画像は4枚を使いまわしています。 */
+.mascotart {
+  display: flex; align-items: flex-end; justify-content: center;
+  gap: 10px; margin: 14px 0 0;
+}
+/* ★大きさの決めかた
+   歩き・バンザイの絵はたて長で、たて58pxだと横が30pxしかなく、
+   スマホでは何が描いてあるか分かりませんでした。
+   顔がはっきり分かる大きさ（横50px以上）を下限にしています。 */
+.mascotart img { height: 132px; width: auto; display: block; }
+.mascotart.sm img { height: 100px; }
+.mascotart.lg img { height: 168px; }
+@media (max-width: 360px) {
+  .mascotart img { height: 112px; }
+  .mascotart.sm img { height: 86px; }
+}
+/* 文章の右に回りこませる置きかた（説明カードで使います） */
+.mascotart.float { float: right; display: block; margin: 0 0 6px 14px; }
+.mascotart.float img { height: 116px; }
+@media (max-width: 360px) { .mascotart.float img { height: 96px; } }
+/* 回りこみが次のカードにはみ出さないようにします */
+.card::after { content: ''; display: block; clear: both; }
+
+/* 印刷には出しません（施設へ出す図面に飾りは載せない） */
+@media print { .mascotart, .hero-mascot { display: none !important; } }
+
+/* 完走記録の上に置く、動くマスコット */
+.mascotart.finishart { margin: 0 0 12px; }
+.mascotart.finishart img { height: 118px; }
+@media (max-width: 360px) { .mascotart.finishart img { height: 98px; } }
+
+/* 「3つの階を行き来します」の囲み ---------------------------- */
+.floorbox {
+  border: 2px solid var(--accent); border-radius: 16px;
+  background: var(--accent-soft); padding: 14px 16px; margin: 0 0 16px;
+}
+.floorhead { margin: 0 0 10px; font-size: 15px; font-weight: 800; color: var(--accent-dark); }
+.floorlist { list-style: none; margin: 0; padding: 0; }
+.floorlist li {
+  display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px;
+  padding: 7px 0; border-top: 1px solid #f0d6bd; font-size: 15px;
+}
+.floorlist li:first-child { border-top: 0; }
+.floorlist .fl { font-weight: 800; min-width: 4.5em; }
+.floorlist .fn { font-weight: 700; }
+.floorlist .fx { font-size: 13px; color: var(--muted); }
+
+/* 3つの階を重ねた立体図 --------------------------------------
+   平面図を傾けて積み上げます。細かい形は読ませません。
+   見せたいのは「上下に3つある」「中央の階段でつながっている」だけ。 */
+.stackbox { margin: 14px 0 0; }
+.stackscene {
+  position: relative;
+  height: 320px;
+  /* ★遠近法は使いません。
+     perspective + translateZ だと、階ごとに大きさと位置がずれて
+     「不規則に散らばった紙」に見えます。
+     同じ形のまま、同じ間隔でずらすほうが、積み重なりが伝わります。 */
+  margin: 0 0 8px;
+}
+.stackscene .plane {
+  /* 左は階の名札のぶんを空けます（④⑤が左端にあるので、重ねない） */
+  position: absolute; left: 27%; right: 5%; top: 50%;
+  aspect-ratio: 1200 / 676;
+  /* 傾ける角度は3枚とも同じ。上下の位置だけを等間隔でずらします
+     （--i は 0=2階, 1=1階, 2=地下1階） */
+  margin-top: calc((var(--i) - 1) * 84px);
+  transform: translateY(-50%) rotateX(62deg) rotateZ(-32deg);
+  border: 1.5px solid #b9b1a4;
+  border-radius: 4px;
+  background: #fff;
+  box-shadow: 0 10px 18px rgba(60,50,40,.16);
+}
+.stackscene .plane img {
+  width: 100%; height: 100%; object-fit: fill; display: block;
+  opacity: .38;                     /* 下敷きなので、うすく */
+}
+/* 面の上に置くのは「位置の目印」だけ。見えません */
+.stackscene .anchor {
+  position: absolute; width: 1px; height: 1px;
+  transform: translate(-50%, -50%);
+}
+/* 階の名前は傾けずに、左側へ水平に置きます */
+.stackscene .planetag {
+  position: absolute; left: 2px;
+  top: calc(50% + (var(--i) - 1) * 84px);
+  transform: translateY(-80%);
+  /* 「ホーム」は下の行に置きます。横に並べると札が広がって、
+     左端にある④⑤のピンに重なります。 */
+  display: flex; flex-direction: column; align-items: flex-start; gap: 3px;
+  font-size: 12px; font-weight: 800; color: var(--text);
+  background: #fff; border: 1px solid var(--line);
+  border-radius: 12px; padding: 3px 8px;
+  white-space: nowrap; line-height: 1.3;
+}
+.stackscene .planetag b {
+  color: #fff; background: var(--accent-dark);
+  border-radius: 999px; padding: 0 8px; font-size: 11px;
+}
+/* 傾いていない板。線と札はここに描きます */
+.stackover { position: absolute; inset: 0; pointer-events: none; }
+.stackover svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.stackover polyline {
+  fill: none; stroke: var(--blue); stroke-width: 4;
+  stroke-linecap: round; stroke-dasharray: 9 7; opacity: .85;
+}
+/* 番号も札も、すべてこの板の上に水平に置きます（向きをそろえるため） */
+.stackover .cpbadge {
+  position: absolute; transform: translate(-50%, -50%);
+  width: 27px; height: 27px; line-height: 25px; text-align: center;
+  border-radius: 50%; border: 2px solid #fff;
+  font-size: 14px; font-weight: 800; color: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,.35);
+}
+.stackover .cpbadge.mystery { border-style: dashed; font-size: 15px; }
+.stackover .sdot {
+  position: absolute; transform: translate(-50%, -50%);
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--blue); border: 2px solid #fff;
+  box-shadow: 0 0 0 7px rgba(63,127,196,.20);
+}
+/* 吹き抜けの軸線。階段の青い線と対にして、上下に貫いていることを示します */
+.stackover polyline.atriumline { stroke: #f2b705; opacity: .9; }
+/* 吹き抜け（黄）。平面図の .pin.atrium と同じ色にそろえています */
+.stackover .adot {
+  position: absolute; transform: translate(-50%, -50%);
+  width: 16px; height: 16px; border-radius: 50%;
+  background: #f2b705; border: 2px solid #fff;
+  box-shadow: 0 0 0 7px rgba(242,183,5,.20);
+}
+.stackover .atriumtag {
+  position: absolute; transform: translate(-100%, -50%);
+  margin-left: -9px;
+  font-size: 11px; font-weight: 800; color: #4a3800; background: #f2b705;
+  padding: 1px 9px; border-radius: 999px; white-space: nowrap;
+  box-shadow: 0 1px 4px rgba(0,0,0,.3);
+}
+.stackover .stairtag, .stackover .outtag {
+  position: absolute; transform: translate(-50%, -175%);
+  font-size: 11px; font-weight: 800; color: #fff;
+  padding: 1px 9px; border-radius: 999px; white-space: nowrap;
+  box-shadow: 0 1px 4px rgba(0,0,0,.3);
+}
+.stackover .stairtag { background: var(--blue); }
+/* ③のすぐ右に置きます（上に出すと、左端の④⑤に重なるため） */
+.stackover .outtag { transform: translate(17px, -50%); }
+
+/* 立体図の注記。上の「やりかた」の注記と同じ見た目にそろえます */
+/* 端末の記録を消す（2段階）------------------------------------
+   ふだん使うものではないので、いちばん下に小さく置きます。
+   押しやすくはしません。ただし、押せなくもしません。 */
+.wipeline { text-align: center; margin: 18px 0 0; }
+.wipeline a {
+  font-size: 12px; color: #a49a8c; text-decoration: none;
+  border-bottom: 1px dotted #cdc4b6; padding-bottom: 1px;
+}
+.wipebox {
+  max-width: 340px; margin: 14px auto 0; padding: 14px 16px;
+  background: #fff; border: 1.5px solid var(--line); border-radius: 14px;
+}
+.wipeq { margin: 0 0 12px; font-size: 13.5px; line-height: 1.7; text-align: center; }
+.wiperow { display: flex; gap: 10px; }
+.wiperow button {
+  flex: 1; padding: 11px 8px; border-radius: 999px; font-family: inherit;
+  font-size: 14px; font-weight: 700; cursor: pointer;
+}
+/* 「やめる」を先に、大きく見せます。既定の逃げ道はこちらです */
+.wipeno { background: var(--accent); color: #43220a; border: none; box-shadow: 0 3px 0 var(--accent-dark); }
+.wipeyes { background: #fff; color: #b4463f; border: 1.5px solid #e3bdba; font-weight: 700; }
+
+.stackcap { margin: 0; font-size: 13px; padding-left: 12px; border-left: 3px solid var(--line); }
+.stackcap .nline { display: block; padding-left: 1.35em; text-indent: -1.35em; margin: 6px 0; }
+.stackcap .nline:first-child { margin-top: 0; }
+.stackcap .nline:last-child { margin-bottom: 0; }
+@media (max-width: 360px) {
+  .stackscene { height: 270px; }
+  .stackscene .plane { margin-top: calc((var(--i) - 1) * 70px); }
+  .stackscene .planetag { top: calc(50% + (var(--i) - 1) * 70px); }
+}
+/* 動きを減らす設定でも、静止画なので影響ありません */
+
+/* 「まだ行っていない場所」の一覧 */
+#todo li { margin: 0 0 6px; line-height: 1.7; }
+#todo .todoplace { color: var(--muted); font-size: 14px; margin-left: 4px; }
+
+/* 生成AI使用クレジット --------------------------------------
+   参加者への案内ではなく、制作の表示です。読ませる文章とは
+   意味あいが違うので、背景をグレーにして一段トーンを落とします。
+   ただし読めなくならないよう、本文の濃さは保ちます。 */
+.card.creditcard {
+  background: #f4f1ec;
+  border-color: #ded8cd;
+  box-shadow: none;
+}
+.card.creditcard h2 { color: #5a5348; }
+.card.creditcard .note { color: #4c5566; }
+
+/* 保存の警告（カードとは別扱い。数に入れないため .card は付けません） */
+.warnbox {
+  background: #fff6e6; border: 1px solid #e2b06a; border-radius: 14px;
+  padding: 14px 16px; margin: 14px 0 0; font-size: 14px; line-height: 1.8;
+  color: #7a3800;
+}
+
+/* あいことばの確認と★の数 ---------------------------------- */
+.starcard { text-align: center; border: 2px solid var(--accent); }
+.starhead {
+  margin: 0; font-size: 13px; font-weight: 700; letter-spacing: .18em;
+  color: var(--muted);
+}
+.starword {
+  margin: 6px 0 2px; font-size: 30px; font-weight: 800; color: var(--accent-dark);
+  letter-spacing: .06em;
+}
+.starword small { display: block; font-size: 15px; color: var(--text); font-weight: 700; letter-spacing: 0; }
+.starrule { height: 1px; background: var(--line); margin: 18px 0 16px; }
+
+.stars { display: flex; justify-content: center; gap: 4px; margin: 8px 0 4px; }
+.stars i {
+  font-style: normal; font-size: 34px; line-height: 1.1; color: #d8d2c6;
+}
+.stars i.on { color: var(--hint); text-shadow: 0 1px 0 #d79b04; }
+/* 1つずつ順に出します（合計1秒たらず。集めた手ごたえが出ます） */
+.stars i.on { animation: starpop .38s cubic-bezier(.2,1.5,.5,1) both; }
+@keyframes starpop { from { transform: scale(.3) rotate(-25deg); opacity: 0; } to { opacity: 1; } }
+
+.starname { margin: 6px 0 0; font-size: 22px; font-weight: 800; color: var(--text); }
+
+/* 花火。画面の上にかぶせるだけで、押せません */
+#fireworks {
+  position: fixed; inset: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 60; display: none;
+}
+
+/* 認定証 -------------------------------------------------- */
+#certCanvas { width: 100%; height: auto; border-radius: 14px; display: block; }
+#certImg { box-shadow: var(--shadow); }
+
+/* 運営ページ用 -------------------------------------------- */
+.qr-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+.qr-item {
+  background: #fff; color: #000; border: 1px solid var(--line);
+  border-radius: 14px; padding: 12px; text-align: center; break-inside: avoid;
+}
+.qr-item svg { width: 100%; height: auto; }
+.qr-item .t { font-weight: 700; margin: 6px 0 0; font-size: 14px; }
+.qr-item .p { font-size: 12px; color: #000; }
+.qr-item .wifistep {
+  font-size: 12.5px; color: #000; text-align: left;
+  margin: 8px 0 0; line-height: 1.65;
+}
+
+@media print {
+  body { background: #fff; }
+  header.bar, .noprint { display: none !important; }
+  .card { border: none; box-shadow: none; animation: none; }
+  .qr-grid { grid-template-columns: repeat(2, 1fr); }
+  .qr-item { border: 1px dashed #999; padding: 18px; }
+}
+
+/* 動きを減らす設定の端末では、アニメーションを止める */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
