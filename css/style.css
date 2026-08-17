@@ -698,6 +698,15 @@ ol.rules li { margin: 9px 0; }
   margin: 8px 0 0; line-height: 1.65;
 }
 
+/* 「まちがっているものを選ぶ」問題の合図。
+   1問だけ向きが逆なので、設問より先に目に入る強さで出します。 */
+.negwarn {
+  margin: 0 0 10px; padding: 8px 12px;
+  background: var(--ng-soft); border: 2px solid var(--ng);
+  border-radius: 10px; color: #a33b3b;
+  font-size: 14.5px; font-weight: 800; text-align: center;
+}
+
 /* 紙にだけ出す要素（画面では邪魔になるもの。商標の注記など） */
 .printonly { display: none; }
 
@@ -708,6 +717,34 @@ ol.rules li { margin: 9px 0; }
   .card { border: none; box-shadow: none; animation: none; }
   .qr-grid { grid-template-columns: repeat(2, 1fr); }
   .qr-item { border: 1px dashed #999; padding: 18px; }
+
+  /* ★1枚1ページで大きく刷るモード（admin.html のチェックで body に付きます）
+     -----------------------------------------------------------
+     チェックポイントに貼るQRは、立ったまま1mほど離れて読めることが要ります。
+     2枚並べだと小さくなるので、1枚ずつページいっぱいに引き伸ばします。
+     文字も一緒に大きくします。QRだけ大きくても、
+     どこの何かが読めなければ貼り分けられません。 */
+  body.bigprint .qr-grid { grid-template-columns: 1fr; gap: 0; }
+  body.bigprint .qr-item {
+    border: none; padding: 0 0 8mm;
+    page-break-after: always; break-after: page;
+  }
+  /* 最後の1枚のあとに白紙が出ないようにします */
+  body.bigprint .qr-grid .qr-item:last-child {
+    page-break-after: auto; break-after: auto;
+  }
+  body.bigprint .qr-item svg { width: 92%; max-width: 165mm; }
+  body.bigprint .qr-item .t { font-size: 34px; margin: 0 0 4px; }
+  body.bigprint .qr-item .p { font-size: 22px; }
+  body.bigprint .qr-item .wifistep {
+    font-size: 15px; max-width: 165mm; margin-left: auto; margin-right: auto;
+  }
+  /* 見出しやカードの余白で1ページ目がずれないようにします */
+  body.bigprint .card { padding: 0; margin: 0; }
+  /* ★これが無いと大きくなりません。
+     画面はスマホ用に .wrap を560pxで止めてあるので、
+     そのまま刷るとA4の中央に細く並ぶだけになります。 */
+  body.bigprint .wrap { max-width: none; padding: 0; }
 }
 
 /* 動きを減らす設定の端末では、アニメーションを止める */
