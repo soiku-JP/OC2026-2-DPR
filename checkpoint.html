@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<!-- 検索エンジンに載せない設定。robots.txt でブロックすると逆効果なので使わないこと -->
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>チェックポイント｜防災ロゲイニング</title>
+<link rel="stylesheet" href="css/style.css">
+<script src="js/diag.js"></script>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- QRが正しくないときに出る画面 -->
+  <div class="card" id="errorCard" style="display:none">
+    <h1 id="errorTitle">読み取りエラー</h1>
+    <p class="lead" id="errorMsg"></p>
+    <div class="mascotart sm"><img src="img/ui/mascot-walk-b.png" alt="歩いているマスコット"></div>
+    <a class="btn sub" href="index.html">スタート画面へもどる</a>
+  </div>
+
+  <!-- チェックポイント本体 -->
+  <div id="main" style="display:none">
+    <!-- 受付を通らずに、ここから入った人への案内（js/checkpoint.js）。
+         進行は止めません。読まずに進める人を止めるより、
+         安全確認にたどりつく道を残すことを優先しています。 -->
+    <div class="card" id="safetyWarn" style="display:none;border:2px solid var(--accent)">
+      <h2 style="margin:0 0 8px;color:var(--accent-dark)">出発前の安全確認が、まだです</h2>
+      <p class="note" style="margin:0 0 10px">
+        受付のQRコードを読まずに、ここから始めた場合に出ます。
+        今日の注意事項（<strong id="swCount">4</strong>つ）を、先に確認してください。
+        <strong>1分もかかりません。</strong>
+      </p>
+      <a class="btn" href="index.html">安全確認をする</a>
+    </div>
+    <p class="note" id="orderWarn" style="display:none;color:#ffb84d;margin:12px 0 0"></p>
+
+    <div class="card themed">
+      <p class="cpemoji" id="cpEmoji" style="display:none"></p>
+      <p class="place" id="cpPlace"></p>
+      <h1 id="cpName"></h1>
+      <p class="movenote" id="cpMove" style="display:none"></p>
+      <div id="cpPhotos"></div>
+      <p id="cpDesc" style="margin-top:14px"></p>
+    </div>
+
+    <div class="card">
+      <h2>ミニクイズ</h2>
+      <p id="qText" style="margin-top:0"></p>
+      <div id="choices"></div>
+
+      <!-- まちがえたときに出るヒント（正解はまだ見せません） -->
+      <div id="hintBox" style="display:none">
+        <p class="result-msg ng" id="hintMsg"></p>
+        <div class="hint" id="hintText"></div>
+      </div>
+
+      <!-- 正解したときだけ出る -->
+      <div id="feedback" style="display:none">
+        <p class="result-msg" id="resultMsg"></p>
+        <div class="explain" id="explain"></div>
+        <div id="rewardBlock" style="display:none;margin-top:16px" class="center">
+          <p style="margin:0 0 4px" class="note">あいことばの文字をゲット！</p>
+          <div style="font-size:44px;font-weight:700;color:var(--accent)" id="rewardLetter"></div>
+          <div class="letters" id="rewardLetters" style="justify-content:center"></div>
+          <div class="lettersbar"><span id="rewardBar"></span></div>
+          <p class="note" id="rewardLeft" style="margin:8px 0 0"></p>
+        </div>
+        <div class="speech" id="cpSpeech" style="display:none;margin-top:14px">
+          <img id="cpMascotImg" alt="">
+          <div class="bubble" id="cpMascotText"></div>
+        </div>
+        <p class="note" id="source" style="margin-top:14px"></p>
+        <div class="card next-card" id="nextBox" style="display:none;margin-bottom:0">
+          <div class="nexthead">
+            <h2>つぎに行く場所</h2>
+            <div class="mascotart sm"><img src="img/ui/mascot-walk-a.png" alt="歩いているマスコット"></div>
+          </div>
+          <div id="nextText"></div>
+          <div id="nextMap"></div>
+          <p class="nextdo" id="nextDo" style="display:none"></p>
+          <p class="walkwarn">ルートの確認は立ち止まってしてください。歩きながらのスマホ操作は危険です。</p>
+        </div>
+        <button class="btn" id="nextBtn">進捗をみる</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/common.js"></script>
+<script src="js/map.js"></script>
+<script src="js/checkpoint.js"></script>
+</body>
+</html>

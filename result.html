@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<!-- 検索エンジンに載せない設定。robots.txt でブロックすると逆効果なので使わないこと -->
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>進捗・ゴール｜防災ロゲイニング</title>
+<link rel="stylesheet" href="css/style.css">
+<script src="js/diag.js"></script>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- つぎに行く場所 -->
+  <div class="card next-card" id="nextBox" style="display:none">
+<div class="nexthead">
+      <h2>つぎに行く場所</h2>
+      <div class="mascotart sm"><img src="img/ui/mascot-walk-b.png" alt="歩いているマスコット"></div>
+    </div>
+    <div id="nextText"></div>
+    <div id="nextMap"></div>
+    <p class="nextdo" id="nextDo" style="display:none"></p>
+    <p class="walkwarn">ルートの確認は立ち止まってしてください。歩きながらのスマホ操作は危険です。</p>
+  </div>
+
+  <div class="card">
+    <p class="place" id="teamName"></p>
+    <h1 style="margin-bottom:12px">あつめた文字</h1>
+    <div class="letters" id="letters"></div>
+    <div class="lettersbar"><span id="lettersBar"></span></div>
+    <p class="note" id="countMsg" style="margin-top:14px"></p>
+    <!-- ★「Aルートの順路 ✓→✓→…」の並びは置いていません。
+         全部まわり終えるとすべて✓になり、何も伝えなくなるためです。
+         いまどこまで進んだかは、すぐ上の「n / 5 か所クリア」と、
+         下の「まだ行っていない場所」で分かります。 -->
+  </div>
+
+  <!-- 5つ集まったら出るゴール確認 -->
+  <div class="card" id="goalCard" style="display:none">
+    <div class="speech" id="goalSpeech" style="display:none">
+      <img id="goalMascotImg" alt="">
+      <div class="bubble" id="goalMascotText"></div>
+    </div>
+    <h2>🏁 ゴール確認</h2>
+    <p id="finalText" style="margin-top:0"></p>
+    <div id="finalChoices"></div>
+    <div id="finalHint" style="display:none">
+      <p class="result-msg ng" id="finalHintMsg"></p>
+      <div class="hint" id="finalHintText"></div>
+    </div>
+    <div id="finalFeedback" style="display:none">
+      <p class="result-msg" id="finalMsg"></p>
+      <div class="explain" id="finalExplain"></div>
+    </div>
+  </div>
+
+  <!-- 花火（★がそろった人だけ。data.js の star.fireworksMin で調整） -->
+  <canvas id="fireworks" aria-hidden="true"></canvas>
+
+  <!-- あいことばの確認と★の数 -->
+  <div class="card starcard" id="starCard" style="display:none">
+    <div class="mascotart"><img src="img/ui/mascot-cheer-a.png" alt="バンザイしているマスコット"><img src="img/ui/mascot-cheer-b.png" alt="バンザイしているマスコット"></div>
+    <p class="starhead">あいことば、完成</p>
+    <p class="starword" id="starKeyword"></p>
+    <div class="starrule"></div>
+    <p class="starhead">一発正解</p>
+    <div class="stars" id="starRow"></div>
+    <p class="starname" id="starName"></p>
+    <p class="note center" id="starWord" style="margin:6px 0 0"></p>
+    <p class="note" id="starNote" style="margin:14px 0 0"></p>
+  </div>
+
+  <!-- 認定証 -->
+  <div class="card" id="certCard" style="display:none">
+    <h2>🎖 完走記録</h2>
+    <!-- ここだけGIF。1回しか出ない画面なので、巡回中の通信には響きません -->
+    <div class="mascotart finishart" id="finishArt"></div>
+    <!-- canvasで描いた絵をimgに変換して表示します。
+         imgなら iPhone でも長押しして写真に保存できます。 -->
+    <canvas id="certCanvas" width="1000" height="700" style="display:none"></canvas>
+    <img id="certImg" alt="完走記録" style="width:100%;height:auto;border-radius:10px;display:block">
+    <button class="btn" id="saveBtn">画像を保存する</button>
+    <p class="note center" id="saveTip" style="margin-top:10px">
+      画像を<strong>長押し</strong>して「"写真"に保存」でも保存できます。<br>
+      スクリーンショットでも構いません。受付に見せてください。
+    </p>
+    <p id="saveHint" class="note center" style="display:none;color:#ffb84d">
+      保存できなかった場合は、上の画像を長押しして保存するか、スクリーンショットを撮ってください。
+    </p>
+    <!-- 画像に書き出せないとき（ファイルを直接開いたときなど）に出します。
+         記録そのものは canvas のまま表示するので、見ることはできます。 -->
+    <p id="certNote" class="note center" style="display:none;color:#d9600f"></p>
+  </div>
+
+  <!-- アンケート（GAME.surveyUrl を設定すると出ます） -->
+  <div class="card next-card" id="surveyCard" style="display:none">
+    <h2 style="margin:0 0 6px">最後にアンケートのお願い</h2>
+    <p class="note" style="margin:0 0 12px">
+      1分ほどで終わります。回答は今後の企画にいかします。
+    </p>
+    <a class="btn" id="surveyBtn" target="_blank" rel="noopener">アンケートに答える</a>
+  </div>
+
+  <!-- 全部まわり終えたら、このカードごと消します（js/result.js）。
+       残りが無いのに「まだ行っていない場所」を残すと、
+       ゴールしたあとの画面に、行き先のない案内が最後に残ってしまうためです。 -->
+  <div class="card" id="todoCard">
+    <h2>まだ行っていない場所</h2>
+    <ul id="todo" style="padding-left:1.2em;font-size:15px"></ul>
+    <a class="btn sub" href="index.html">スタート画面へ</a>
+  </div>
+
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/common.js"></script>
+<script src="js/map.js"></script>
+<script src="js/fireworks.js"></script>
+<script src="js/result.js"></script>
+</body>
+</html>

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<!-- 検索エンジンに載せない設定。robots.txt でブロックすると逆効果なので使わないこと -->
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>防災ロゲイニング｜スタート</title>
+<link rel="stylesheet" href="css/style.css">
+<script src="js/diag.js"></script>
+</head>
+<body>
+<div class="wrap stagger">
+
+  <div class="hero">
+    <!-- 写真の右上に立たせます。文字にかからない位置です -->
+    <div class="hero-mascot"><img src="img/ui/mascot-anime.png" alt="本学のマスコット2体"></div>
+    <div class="hero-text">
+      <p class="hero-sub">日本大学危機管理学部</p>
+      <h1 class="hero-title" id="heroTitle">防災ロゲイニング</h1>
+      <p class="hero-tag" id="heroTag"></p>
+      <p class="hero-lead">スマホを手に、校内5か所であいことばを集めよう。</p>
+    </div>
+  </div>
+
+  <p id="storageWarn" class="warnbox" style="display:none"></p>
+
+  <div class="card">
+    <h2>「防災」ロゲイニングです</h2>
+    <div class="mascotart float"><img src="img/ui/mascot-walk-a.png" alt="ヘルメットをかぶったマスコット"></div>
+    <p class="note" style="margin-top:0">
+      危機管理学部では、安全保障、サイバーセキュリティ、社会安全などとともに、
+      <strong>防災の制度や運用</strong>について学びます。
+    </p>
+    <p class="note">
+      今日は、この校舎にある<strong>防災関連の施設・設備</strong>を実際に見て、
+      <strong>防災に関する研究</strong>の一部にも触れてもらいます。
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>「ロゲイニング」とは</h2>
+    <p class="note" style="margin-top:0">
+      地図を手に、<strong>指定されたチェックポイントをまわり、ルートを組み立てて周遊しながら、
+      得点を競う</strong>ゲームです。移動は自分の足で行います。
+    </p>
+    <p class="note">
+      今回は<strong>校内版</strong>です。本来は時間も問いますが、
+      <strong>安全のため、時間は問いません</strong>。
+      ルートも、混みあわないよう受付で指定します。
+      <strong id="cpTotal2">5</strong>か所すべてをまわって、
+      その場でしか手に入らない<strong>あいことばの文字</strong>と★を集めてください。
+      参加は個人でも、友だちどうしでもかまいません。
+      標準所要時間は<strong id="limit">20</strong>分ですが、目安です。
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>やりかた</h2>
+    <!-- 階の分布。内容は js/data.js から自動で作ります -->
+    <div class="floorbox" id="floorBox" style="display:none"></div>
+    <!-- 3つの階を重ねた立体図。平面図と位置は js/data.js から -->
+    <div class="stackbox" id="stackBox" style="display:none"></div>
+    <ol class="rules">
+      <li><strong>受付で指定されたルート</strong>を選んでスタート。名前や連絡先は聞きません。</li>
+      <li>画面に出る<strong>「つぎに行く場所」</strong>の地図を見て、そこへ歩く。</li>
+      <li>着いたら、<strong>その場のQRコード</strong>をスマホのカメラで読み取る。</li>
+      <li>写真と説明を読み、<strong>ミニクイズ</strong>に答える。</li>
+      <li>正解すると<strong>あいことばの1文字</strong>がもらえる。</li>
+      <li>また<strong>「つぎに行く場所」</strong>が出る。これを<strong id="cpTotal">5</strong>回くり返してゴールへ。</li>
+    </ol>
+    <div class="mascotart float"><img src="img/ui/mascot-walk-b.png" alt="歩いているマスコット"></div>
+    <!-- ※の注記は、やりかた本文（上の1〜6）と混ざらないよう、まとめて一段下げます -->
+    <div class="notes">
+      <p class="note">
+        ※ ルートは2種類あります。同じ場所に人が集中しないよう、
+        <strong>必ず自分のルートの順番で</strong>回ってください。
+      </p>
+      <p class="note">
+        ※ 1か所だけ、地図に場所を出していない<strong>ミステリースポット</strong>があります。
+        現地の案内表示と学生スタッフをたよりに探してください。
+      </p>
+      <p class="note" id="timerNote"></p>
+      <p class="note">※ まちがえても、ヒントを見て何度でも答えられます。1回で正解すると★がつきます。</p>
+      <p class="note">
+        ※ スマホは<strong>一緒に回る人で1台</strong>あれば大丈夫です。画面を見せ合いながら回ってください。
+      </p>
+    </div>
+  </div>
+
+  <!-- 記録の扱い。★スタートより前に置いてください。
+       「スタートする」を押した時点で、はじめてスマホの中に保存が始まります。
+       その前に、何を預からないかを読んでもらうための位置です。 -->
+  <div class="card">
+    <h2>記録について（個人情報は預かりません）</h2>
+    <p class="note" style="margin-top:0">
+      <strong>名前も連絡先も聞きません。</strong>
+      だれが参加したか、だれが何問正解したかを、大学側で記録することはありません。
+    </p>
+    <p class="note">
+      進み具合と★は<strong>スマホの中だけ</strong>に保存されます。
+      このアプリにはサーバーもデータベースもなく、
+      <strong>クイズに答えた内容がどこかへ送られることはありません。</strong>
+      「はじめからやり直す」を押すか、ブラウザの保存データを消せば、記録も消えます。
+    </p>
+    <p class="note">
+      <!-- ★カメラの説明は置いていません。QRを読む企画である以上、
+           カメラを使うことは自明で、書いても情報が増えないためです。
+           GPSのほうは、位置ゲームだと思われかねないので残しています。 -->
+      <strong>位置情報（GPS）は使いません。</strong>
+    </p>
+    <!-- ★公開先を GitHub 以外にする場合は、サービス名をここで書き換えてください -->
+    <p class="note">
+      ※ アプリを置いている外部サーバー（GitHub）には接続記録が一時的に残りますが、
+      <strong>オープンキャンパスの終了後、サイトごと削除します。</strong>
+    </p>
+    <!-- ★アンケートは、このアプリで唯一「外に出る」ところです。
+         Googleフォームを使う以上、回答はGoogleのサーバーに保存されます。
+         ここを書かずに「どこにも送られない」とだけ書くと、事実に反します。
+         アンケートをやめる／紙にする場合は、この段落ごと消してください。
+         （data.js の surveyUrl を空にすると、consistency.mjs が
+           この段落の要否をあわせて見ます） -->
+    <p class="note">
+      ※ 最後に<strong>無記名</strong>のアンケートがあります。回答は自由です。
+      Google フォームによるアンケートで、<strong>回答は Google のサーバーに保存されます。</strong>
+      皆さんの端末が Google にログイン中であると（ログアウトするか、シークレットウィンドウで開く場合は別）、
+      <strong>Google 側からは送信者が回答も含めて分かる状態になります。</strong>
+      <strong>大学側には分かりません。</strong>
+    </p>
+  </div>
+
+  <div class="card" id="startCard">
+
+    <div id="startBlock">
+      <h2 class="gostart">いよいよ、スタートです</h2>
+      <p class="note" style="margin:-8px 0 14px">
+        説明はここまでです。安全確認をして、順路を受け取ったら出発です。
+      </p>
+      <div class="speech" id="mascotSpeech" style="display:none">
+        <img id="mascotImg" alt="">
+        <div class="bubble" id="mascotText"></div>
+      </div>
+
+      <!-- ★並び順は、当日の3段階（① 入口QR → ② 安全確認 → ③ 順路QR）と
+           そろえてあります。安全確認を先に済ませ、そのあと順路を受け取ります。 -->
+      <h2 style="margin-top:16px">② 出発前の安全確認</h2>
+      <p class="note" style="margin:-6px 0 10px">
+        この<strong id="checkTotal">5</strong>つが、今日の注意事項のすべてです。
+        <strong>ひとつずつ押して、チェックを入れてください。</strong>
+      </p>
+      <div class="checklist" id="checklist"></div>
+      <p class="checkcount" id="checkCount"></p>
+      <p id="checkError" style="display:none;color:#e05a5a;font-size:14px;margin:10px 0 0">
+        まだチェックの入っていない項目があります。
+      </p>
+
+      <h2 style="margin-top:24px" id="routeHead">③ あなたの順路</h2>
+      <div id="routeFixed" style="display:none"></div>
+
+      <!-- 安全確認のあと、順路QRを読み取ってもらう案内 -->
+      <div id="awaitRoute" style="display:none"></div>
+
+      <div id="nameBlock" style="display:none">
+        <label for="team" style="font-size:14px;font-weight:700">
+          受付で渡された番号を入力してください
+        </label>
+        <input type="text" id="team" placeholder="例：A-014" autocomplete="off">
+        <p id="teamError" style="display:none;color:#e05a5a;font-size:14px;margin:8px 0 0">
+          番号を入力してください。
+        </p>
+      </div>
+
+      <p style="font-size:14px;font-weight:700;margin:0 0 6px" id="routeLead">
+        受付の順路QRコードを読み取ると、ここが自動で決まります。<br>
+        QRが読めないときは、受付で指定されたほうを押してください。
+      </p>
+      <div class="routepick" id="routePick"></div>
+      <p id="routeError" style="display:none;color:#e05a5a;font-size:14px;margin:8px 0 0">
+        順路が決まっていません。受付のQRコードを読み取るか、上のどちらかを押してください。
+      </p>
+
+      <button class="btn notready" id="startBtn">スタートする</button>
+      <p class="note center" id="startNote" style="margin-top:8px"></p>
+      <p class="center" style="margin-top:10px">
+        <a href="check.html" class="note" style="color:#4c5566">
+          ボタンが効かないとき → ファイル確認ページ
+        </a>
+      </p>
+    </div>
+
+  </div>
+
+  <!-- すでに始めている人向け。スタート欄と同じ位置（AI使用クレジットの前）に出します。
+       「つづきをみる」と「スタートする」が、いつも画面の同じ場所にあるようにするためです。 -->
+  <div class="card" id="resumeCard" style="display:none">
+      <div id="resumeBlock" style="display:none">
+        <div id="freshBox" style="display:none"></div>
+        <h2 class="gostart" id="resumeHead"></h2>
+        <p style="margin:-8px 0 10px" id="resumeLead"></p>
+        <div class="progress" id="progress"></div>
+        <p class="note" style="margin-top:12px">
+          出発前の安全確認は<strong>確認済み</strong>です。そのため、この画面には出していません。
+        </p>
+        <a class="btn" href="result.html" style="margin-top:12px" id="resumeBtn">つづきをみる</a>
+      </div>
+  </div>
+
+  <!-- 生成AI使用クレジット。ほかの説明とは意味あいが違うので、グレーで一段落とします -->
+  <div class="card creditcard" id="creditCard" style="display:none"></div>
+
+  <p class="center note"><a href="result.html" style="color:#4c5566">結果画面へ</a></p>
+  <!-- 端末の記録を消す入口。この端末に記録があるときだけ出します（js/start.js）。
+       ★小さく、目立たない場所に置いてあります。
+         同じ端末を別の人が使うことは、原則としてありません。
+         ふだん使うものではなく、テスト機と、まれな引き継ぎのためのものです。
+       ★2段階にしてあります。1回押しただけでは消えません。 -->
+  <p class="wipeline" id="wipeLine" style="display:none">
+    <a href="#" id="wipeLink">記録を消す</a>
+  </p>
+  <div class="wipebox" id="wipeBox" style="display:none">
+    <p class="wipeq" id="wipeMsg"></p>
+    <div class="wiperow">
+      <button type="button" class="wipeno" id="wipeCancel">やめる</button>
+      <button type="button" class="wipeyes" id="wipeGo">消す</button>
+    </div>
+  </div>
+  <p class="center note" id="versionNote"
+     style="display:none;color:#8a8073;font-size:12px;margin-top:2px"></p>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/common.js"></script>
+<script src="js/map.js"></script>
+<script src="js/start.js"></script>
+</body>
+</html>

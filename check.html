@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<!-- 検索エンジンに載せない設定。robots.txt でブロックすると逆効果なので使わないこと -->
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ファイル確認</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1>ファイル確認</h1>
+    <p class="lead">必要なファイルがそろっているかを調べます。</p>
+    <ul id="list" style="padding-left:1.2em;font-size:15px"></ul>
+    <p id="verdict" style="font-weight:700;font-size:17px"></p>
+    <div class="mascotart sm" id="checkArt"><img src="img/ui/mascot-walk-a.png" alt="歩いているマスコット"></div>
+    <p id="ver" style="font-size:13px;color:#4c5566"></p>
+    <a class="btn" href="index.html">スタート画面へ</a>
+  </div>
+</div>
+
+<script>
+/* このページだけは、他のファイルに頼らずに動くよう1枚に書いてあります */
+window.__diagOff = true;   // 読み込みテスト中のエラー表示は不要
+var files = [
+  'css/style.css',
+  'js/diag.js', 'js/data.js', 'js/storage.js', 'js/common.js',
+  'js/start.js', 'js/checkpoint.js', 'js/result.js', 'js/map.js',
+  'js/fireworks.js',
+  'img/ui/mascot-walk-a.png', 'img/ui/mascot-walk-b.png',
+  'img/ui/mascot-cheer-a.png', 'img/ui/mascot-cheer-b.png',
+  'vendor/qrcode.js',
+  'img/cp/cp1.jpg', 'img/cp/cp2.jpg', 'img/cp/cp3.jpg',
+  'img/cp/cp4.jpg', 'img/cp/cp5a.jpg', 'img/cp/cp5b.jpg', 'img/ui/hero.jpg',
+  'img/ui/mascot-photo.png', 'img/ui/mascot-anime.png', 'img/ui/mascot-a.png', 'img/ui/mascot-b.png',
+  'img/map/b1.jpg', 'img/map/f1.jpg', 'img/map/f2.jpg'
+];
+/* 運営用の平面図（文字を消す前のもの）。公開用フォルダには入れないので、
+   無くてもエラーにはしません。手元の一式では有ることを確認します。 */
+var optional = [
+  'js/admin.js',
+  'img/map/b1_staff.jpg', 'img/map/f1_staff.jpg', 'img/map/f2_staff.jpg'
+];
+var list = document.getElementById('list');
+var ng = 0, done = 0;
+
+files.concat(optional).forEach(function (f) {
+  var isOptional = optional.indexOf(f) >= 0;
+  var li = document.createElement('li');
+  li.textContent = '… ' + f;
+  list.appendChild(li);
+
+  // <script> や <img> の読み込みで存在を判定する（file:// でも動く方法）
+  var isImg = /\.(svg|jpe?g|png|gif|webp)$/i.test(f);
+  var el = document.createElement(isImg ? 'img' : 'script');
+  el.onload = function () { li.textContent = '✅ ' + f; finish(); };
+  el.onerror = function () {
+    if (isOptional) { li.textContent = '－ ' + f + '　（運営用。公開版では省きます）'; }
+    else { li.textContent = '❌ ' + f + '　← 見つかりません'; ng++; }
+    finish();
+  };
+  if (isImg) { el.style.display = 'none'; el.src = f; document.body.appendChild(el); }
+  else { el.src = f; document.head.appendChild(el); }
+});
+
+function finish() {
+  done++;
+  if (done < files.length + optional.length) return;
+  var v = document.getElementById('verdict');
+  if (ng === 0) {
+    v.style.color = '#2fa76f';
+    v.textContent = '✅ すべてそろっています。';
+    // そろったので、マスコットもバンザイに差し替えます
+    document.getElementById('checkArt').innerHTML =
+      '<img src="img/ui/mascot-cheer-a.png" alt="バンザイしているマスコット">';
+    if (typeof GAME !== 'undefined' && GAME.version) {
+      document.getElementById('ver').textContent =
+        'いま開いているファイルの版：' + GAME.version;
+    }
+    if (typeof CHECKPOINTS === 'undefined') {
+      v.style.color = '#ff6b6b';
+      v.textContent = '⚠ ファイルはありますが js/data.js の中身を読み込めていません。文字コードがUTF-8か確認してください。';
+    }
+  } else {
+    v.style.color = '#ff6b6b';
+    v.textContent = '❌ ' + ng + ' 個のファイルが足りません。zipを解凍し直してください（zipの中身を直接開いていませんか？）。';
+  }
+}
+</script>
+</body>
+</html>

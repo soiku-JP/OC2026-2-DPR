@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<!-- 検索エンジンに載せない設定。robots.txt でブロックすると逆効果なので使わないこと -->
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ルート説明シート｜防災ロゲイニング</title>
+<link rel="stylesheet" href="css/style.css">
+<script src="js/diag.js"></script>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="card noprint">
+    <h1>ルート説明シート</h1>
+    <div class="mascotart sm"><img src="img/ui/mascot-walk-a.png" alt="歩いているマスコット"><img src="img/ui/mascot-walk-b.png" alt="歩いているマスコット"></div>
+    <p class="lead">
+      出発前の説明で投影する／印刷して配るためのページです。
+      画面右上の切り替えで、AルートとBルートを表示できます。
+    </p>
+    <div class="routepick" id="routePick"></div>
+    <button class="btn sub" id="printBtn" style="margin-top:12px">印刷する</button>
+  </div>
+
+  <div class="card">
+    <h1 id="routeTitle" style="margin-top:0"></h1>
+    <p class="place" id="routeOrderText"></p>
+    <div id="routeMaps"></div>
+  </div>
+
+  <div class="card">
+    <h2>説明のポイント</h2>
+    <ol class="rules">
+      <li>回る順番は<strong>アプリの画面に1か所ずつ出ます</strong>。覚えなくて大丈夫です。</li>
+      <li>各ポイントには<strong>学生スタッフが2名</strong>います。分からなければ声をかけてください。</li>
+      <li><strong>歩きスマホは禁止</strong>。画面と地図は、ポイントに着いて立ち止まってから見ます。</li>
+      <li>階段は手すりを使い、走らないでください。</li>
+    </ol>
+  </div>
+
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/common.js"></script>
+<script src="js/map.js"></script>
+<script>
+let shown = 'A';
+
+function draw() {
+  const r = ROUTES[shown];
+  document.getElementById('routeTitle').textContent = r.label;
+  document.getElementById('routeOrderText').textContent =
+    r.order.map(function (id, i) {
+      const cp = findCp(id);
+      return (i + 1) + '. ' + cpMark(cp.id) + ' ' + cp.name + '（' + cp.place + '）';
+    }).join('　→　');
+  renderRouteMap('routeMaps', shown);
+  document.querySelectorAll('.routebtn').forEach(function (b) {
+    b.classList.toggle('on', b.dataset.k === shown);
+  });
+}
+
+const pick = document.getElementById('routePick');
+Object.keys(ROUTES).forEach(function (key) {
+  const b = document.createElement('button');
+  b.className = 'routebtn';
+  b.dataset.k = key;
+  b.innerHTML = '<span class="rname">' + ROUTES[key].label + '</span>' +
+                '<span class="rorder">' + ROUTES[key].order.map(cpMark).join(' → ') + '</span>';
+  b.addEventListener('click', function () { shown = key; draw(); });
+  pick.appendChild(b);
+});
+
+document.getElementById('printBtn').addEventListener('click', function () { window.print(); });
+
+mountHeader(false);
+draw();
+</script>
+</body>
+</html>
