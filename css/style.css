@@ -698,9 +698,13 @@ ol.rules li { margin: 9px 0; }
   margin: 8px 0 0; line-height: 1.65;
 }
 
+/* 紙にだけ出す要素（画面では邪魔になるもの。商標の注記など） */
+.printonly { display: none; }
+
 @media print {
   body { background: #fff; }
   header.bar, .noprint { display: none !important; }
+  .printonly { display: block !important; }
   .card { border: none; box-shadow: none; animation: none; }
   .qr-grid { grid-template-columns: repeat(2, 1fr); }
   .qr-item { border: 1px dashed #999; padding: 18px; }
