@@ -241,13 +241,25 @@ function showCertificate(save) {
   g.fillStyle = '#9aa8c0'; g.font = '22px ' + F;
   g.fillText(dateStr + '　' + (GAME.organizer || '日本大学危機管理学部'), W / 2, 584);
 
+  /* 公式SNSのアカウント名（data.js の snsLine）。
+     完走日の行と締めの一文のあいだに、控えめに1行だけ入れます。
+     ★右下のマスコット（x=804〜944）に掛からない幅であることを、
+       実際に測って確かめてあります。長い文字列に変えるときは要注意です。 */
+  if (GAME.snsLine) {
+    g.fillStyle = '#7f8ca6'; g.font = '20px ' + F;
+    g.fillText(GAME.snsLine, W / 2, 610);
+  }
+
   g.fillStyle = '#ff8a3d'; g.font = 'bold 26px ' + F;
   g.fillText('このキャンパスで、またお会いしましょう。', W / 2, 636);
 
   /* 画面には動く絵（GIF）を、保存する画像には止まった絵を入れます。
      GIFはcanvasに描くと1コマ目しか入らないので、静止画のほうを使います。 */
   const art = mascotFor('finish');
-  const still = 'img/ui/mascot-cheer-a.png';
+  /* 保存する画像に入れる絵。ピンクと青の2体（mascot-anime.png）です。
+     ★横長なので、高さを詰めてあります。高さ150のままだと幅が200になり、
+       すぐ下の「このキャンパスで、またお会いしましょう。」に重なります。 */
+  const still = 'img/ui/mascot-anime.png';
   if (art && art.src) {
     const box = document.getElementById('finishArt');
     if (box) box.innerHTML = '<img src="' + art.src + '" alt="' + (art.alt || '') + '">';
@@ -294,9 +306,15 @@ function showCertificate(save) {
   }
   const mi = new Image();
   mi.onload = function () {
-    const h = 150;
-    const w2 = Math.round(h * mi.width / mi.height);
-    g.drawImage(mi, W - 62 - w2, 640 - h, w2, h);
+    /* 右下に置きます。幅は絵の縦横比から決まるので、
+       横長の絵でも文字に重ならないよう、幅のほうに上限を設けます。 */
+    /* 幅140は測って決めた値です。これを超えると、絵の左端が
+       完走日の行（右端およそ786px）に届いて重なります。 */
+    const maxW = 140, maxH = 132;
+    let w2 = Math.round(maxH * mi.width / mi.height);
+    let h = maxH;
+    if (w2 > maxW) { w2 = maxW; h = Math.round(maxW * mi.height / mi.width); }
+    g.drawImage(mi, W - 56 - w2, 640 - h, w2, h);
     finishCert();
   };
   mi.onerror = finishCert;   // 画像がなくても記録は出します
