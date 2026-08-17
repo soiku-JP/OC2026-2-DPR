@@ -143,16 +143,20 @@
 
       <!-- ★並び順は、当日の3段階（① 入口QR → ② 安全確認 → ③ 順路QR）と
            そろえてあります。安全確認を先に済ませ、そのあと順路を受け取ります。 -->
-      <h2 style="margin-top:16px">② 出発前の安全確認</h2>
-      <p class="note" style="margin:-6px 0 10px">
-        この<strong id="checkTotal">5</strong>つが、今日の注意事項のすべてです。
-        <strong>ひとつずつ押して、チェックを入れてください。</strong>
-      </p>
-      <div class="checklist" id="checklist"></div>
-      <p class="checkcount" id="checkCount"></p>
-      <p id="checkError" style="display:none;color:#e05a5a;font-size:14px;margin:10px 0 0">
-        まだチェックの入っていない項目があります。
-      </p>
+      <!-- 安全確認をひとまとめにしてあります。②を済ませたあと③の前に
+           開き直した人には、この塊ごと隠します（js/start.js）。 -->
+      <div id="safetyBlock">
+        <h2 style="margin-top:16px">② 出発前の安全確認</h2>
+        <p class="note" style="margin:-6px 0 10px">
+          この<strong id="checkTotal">5</strong>つが、今日の注意事項のすべてです。
+          <strong>ひとつずつ押して、チェックを入れてください。</strong>
+        </p>
+        <div class="checklist" id="checklist"></div>
+        <p class="checkcount" id="checkCount"></p>
+        <p id="checkError" style="display:none;color:#e05a5a;font-size:14px;margin:10px 0 0">
+          まだチェックの入っていない項目があります。
+        </p>
+      </div>
 
       <h2 style="margin-top:24px" id="routeHead">③ あなたの順路</h2>
       <div id="routeFixed" style="display:none"></div>
