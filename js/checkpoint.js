@@ -114,6 +114,17 @@ function render() {
     box.appendChild(img);
   });
   document.getElementById('cpDesc').textContent = cp.description;
+  /* ★「まちがっているものを選ぶ」問題の合図。
+     ほかの4問はすべて「正しいものを選ぶ」形です。1問だけ向きが逆だと、
+     読み流した人がそのまま引っかかります。問題の難しさではなく、
+     出題形式の不統一で外させるのは、この企画の趣旨に合いません。 */
+  if (cp.quiz.negative) {
+    const neg = document.getElementById('qNeg');
+    if (neg) {
+      neg.textContent = 'この問題だけ、まちがっているものを選びます';
+      neg.style.display = 'block';
+    }
+  }
   document.getElementById('qText').textContent = cp.quiz.text;
   buildChoices();
 
