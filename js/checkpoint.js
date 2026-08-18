@@ -220,10 +220,19 @@ function showAnswer(justAnswered) {
     msg.className = 'result-msg ok';
   }
 
-  document.getElementById('explain').textContent = cp.quiz.explain;
-  // 画面では出典の「名前」だけを出します（URLは data.js と資料に残しています）
-  document.getElementById('source').textContent =
-    cp.source ? '出典：' + cp.source.replace(/https?:\/\/\S+/g, '').replace(/\s+/g, ' ').trim() : '';
+  /* ★解説は innerHTML で入れます。
+     以前は textContent だったため、data.js に書いた <strong> が
+     そのまま文字として画面に出ていました（ヒントや moveNote は
+     innerHTML なので、ここだけ扱いが違っていました）。
+     改行は CSS の white-space: pre-line がそのまま効きます。 */
+  document.getElementById('explain').innerHTML = cp.quiz.explain;
+  /* 出典。著者・標題・媒体・年月だけを、小さめの文字で出します。
+     ★URLは載せません。このアプリはオープンキャンパスの終了後に取り下げるもので、
+       論文のような追跡可能性まで担保する必要がないためです（方針として決めたもの）。
+     ★ただし「出典そのものを書かない」ことは許しません。data.js の source が
+       出どころで、tools/consistency.mjs が空でないことを毎回調べます。 */
+  const srcEl = document.getElementById('source');
+  srcEl.textContent = cp.source ? '出典　' + cp.source : '';
   document.getElementById('rewardBlock').style.display = 'block';
   document.getElementById('rewardLetter').textContent = cp.letter;
   // 集めた文字と、あと何文字かを、その場で見せる
