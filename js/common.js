@@ -208,7 +208,9 @@ function renderNext(boxId, textId) {
       pick.appendChild(b);
     });
     const mapBox = document.getElementById('nextMap');
-    if (mapBox) { mapBox.innerHTML = ''; mapBox.appendChild(pick); }
+    // ここはルートを選ぶボタンを入れる場所です。前回 display:none にした
+    // ままだと出てこないので、明示的に戻します。
+    if (mapBox) { mapBox.innerHTML = ''; mapBox.style.display = ''; mapBox.appendChild(pick); }
     if (doBox) doBox.style.display = 'none';
     if (warn) warn.style.display = 'none';
     return;
@@ -217,6 +219,21 @@ function renderNext(boxId, textId) {
   const started = clearedCount(save) > 0;   // 1つでも読み取っていれば「出発ずみ」
   function inSameRoom(target) {
     return !!(here && here.room && target && target.room && here.room === target.room);
+  }
+
+  /* ★地図を出すか、出さないか。ここは直したところです。
+     以前は、いつでも地図を描いていました。ホーム（1203教室）の中では
+     ④→⑤→ゴールと、移動がないまま同じ地図が三度つづけて出るため、
+     「また同じ絵か」と読み飛ばされ、ほんとうに移動するときの地図まで
+     軽く見られていました。移動がないなら、地図は出しません。
+     ただし出発前（まだ1つも読み取っていないとき）の④だけは、
+     いま自分がどこにいるかを知らせる最初の1枚なので残します。 */
+  function showMap(draw) {
+    const mapBox = document.getElementById('nextMap');
+    if (!mapBox) return;
+    if (!draw) { mapBox.innerHTML = ''; mapBox.style.display = 'none'; return; }
+    mapBox.style.display = '';
+    draw();
   }
 
   if (!cp) {
@@ -229,11 +246,14 @@ function renderNext(boxId, textId) {
       '<span class="nextplace">' + GAME.goal.text + '</span>' +
       '<span class="nextstep">' +
         (same ? '移動はありません。いまいる部屋です。' : '① 行き方（下の地図）') + '</span>';
-    if (typeof renderGoalMap === 'function') renderGoalMap('nextMap');
+    // 同じ部屋にいるなら地図は出しません（すぐ上の showMap の説明のとおり）
+    showMap(!same && typeof renderGoalMap === 'function'
+      ? function () { renderGoalMap('nextMap'); } : null);
     if (doBox) {
       doBox.style.display = 'block';
       doBox.innerHTML = (same ? '' : '<strong>② 着いたら</strong>　') +
-        'ゴール確認に答えると、完走記録が出ます。受付に見せてください。参加賞をお渡しします。';
+        'ゴールに進んで、フィニッシュ確認をすると、完走記録が出ます。' +
+        '受付に見せてください。参加賞をお渡しします。';
     }
     /* 移動がないなら、歩きスマホの注意は出しません。
        全部まわり終えて同じ部屋にいる人に、歩く注意は要りません。 */
@@ -254,7 +274,10 @@ function renderNext(boxId, textId) {
       (same ? (started ? '移動はありません。いまいる部屋の中です。'
                        : 'いまいる部屋です。ここから始めます。')
             : '① 行き方（下の地図）') + '</span>';
-  if (typeof renderMap === 'function') renderMap('nextMap', cp);
+  /* 移動がなく、しかも出発ずみなら、地図は出しません。
+     出発前（started が false）の④だけは、最初の1枚として残します。 */
+  showMap(!(same && started) && typeof renderMap === 'function'
+    ? function () { renderMap('nextMap', cp); } : null);
   if (doBox) {
     doBox.style.display = 'block';
     doBox.innerHTML = (same ? '' : '<strong>② 着いたら</strong>　') +

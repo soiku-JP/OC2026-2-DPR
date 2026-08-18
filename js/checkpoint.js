@@ -180,6 +180,24 @@ function showHint() {
   box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
+/* 正解の画面を、かならず「★ 正解！」の行から見せる ---------
+   ここは直したところです。以前は scrollIntoView の block:'nearest' を
+   使っていました。'nearest' は「少しでも見えていれば動かない」ので、
+   解説が長い問題では画面が解説の途中で止まり、毎回、上へ戻して
+   「★ 正解！　一発正解ボーナス」を読みに行くことになっていました。
+   ・見出しの帯（header.bar）は position: sticky で上に居すわるので、
+     その高さぶんだけ余分に上へ寄せないと、1行目が帯の下に隠れます。
+   ・写真やマスコットの絵はあとから読み込まれ、そのぶん下にずれます。
+     そこで、描いた直後と、少し置いてからの2回、位置を合わせます。 */
+function scrollToResult(smooth) {
+  const fb = document.getElementById('feedback');
+  if (!fb) return;
+  const bar = document.querySelector('header.bar');
+  const gap = (bar ? bar.getBoundingClientRect().height : 0) + 12;
+  const y = fb.getBoundingClientRect().top + window.pageYOffset - gap;
+  window.scrollTo({ top: y < 0 ? 0 : y, behavior: smooth ? 'smooth' : 'auto' });
+}
+
 /* 正解したとき -------------------------------------------- */
 
 function showAnswer(justAnswered) {
@@ -259,7 +277,18 @@ function showAnswer(justAnswered) {
   const remain = nextCp(loadSave());
   document.getElementById('nextBtn').textContent =
     remain ? 'この地図をもう一度みる（進捗画面）' : 'ゴールへ進む';
-  fb.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  /* ★答え合わせの画面は、かならず「★ 正解！」の行から始めます。
+     ・その場で答えたとき … なめらかに動かします
+     ・すでにクリア済みのポイントを開き直したとき … その位置で開きます
+     あとから読み込まれる写真の分だけずれるので、少し置いてもう一度合わせます。 */
+  scrollToResult(!!justAnswered);
+  setTimeout(function () {
+    const fb2 = document.getElementById('feedback');
+    const bar = document.querySelector('header.bar');
+    const gap = (bar ? bar.getBoundingClientRect().height : 0) + 12;
+    // 8px 以上ずれているときだけ直します。毎回動かすと画面がはねます。
+    if (fb2 && Math.abs(fb2.getBoundingClientRect().top - gap) > 8) scrollToResult(false);
+  }, 700);
 }
 
 document.getElementById('nextBtn').addEventListener('click', function () {
