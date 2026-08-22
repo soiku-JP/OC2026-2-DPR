@@ -15,7 +15,8 @@ function draw() {
 
   const done = clearedCount(save);
   document.getElementById('countMsg').textContent =
-    done + ' / ' + CHECKPOINTS.length + ' か所クリア　★一発正解 ' + starCount(save) + ' 個';
+    done + ' / ' + CHECKPOINTS.length + ' か所クリア　★一発正解 ' +
+    starCount(save) + ' / ' + CHECKPOINTS.length + ' 問';
 
   // 残りの場所リスト（自分のルートの順番で並べる）
   const todo = document.getElementById('todo');
@@ -226,7 +227,7 @@ function showCertificate(save) {
   g.fillStyle = '#ffd166'; g.font = '52px ' + F;
   g.fillText('★'.repeat(stars) + '☆'.repeat(n - stars), W / 2, save.team ? 396 : 372);
   g.fillStyle = '#eef2f8'; g.font = 'bold 30px ' + F;
-  g.fillText(starName(stars) + '　一発正解 ' + stars + ' / ' + n +
+  g.fillText(starName(stars) + '　一発正解 ' + stars + ' / ' + n + ' 問' +
              (GAME.showTimer ? '　／　所要時間 ' + formatTime(sec) : ''),
              W / 2, save.team ? 446 : 424);
 

@@ -306,7 +306,7 @@ function renderStack(elId) {
       over.appendChild(badge);
       if (s.dataset.outdoor) {
         const tag = document.createElement('span');
-        tag.className = 'outtag';
+        tag.className = 'outtag';   // 置き場所は css の .stackover .outtag（③の左）
         tag.textContent = '屋外';
         tag.style.background = s.dataset.color;
         tag.style.left = p[0] + 'px';
