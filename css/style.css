@@ -590,8 +590,13 @@ ol.rules li { margin: 9px 0; }
   box-shadow: 0 1px 4px rgba(0,0,0,.3);
 }
 .stackover .stairtag { background: var(--blue); }
-/* ③のすぐ右に置きます（上に出すと、左端の④⑤に重なるため） */
-.stackover .outtag { transform: translate(17px, -50%); }
+/* 「屋外」の札は③の左に置きます。
+   ・上に出すと、左端の④⑤に重なります
+   ・右に出すと（以前の translate(17px,-50%)）、吹き抜けの黄色い破線に
+     かぶりました。破線は上下階を貫いていることを示す線なので、
+     札で途切れて見えると、図の意味そのものが伝わりません
+   そこで、吹き抜けの札（.atriumtag）と同じ置きかたで左へ寄せています。 */
+.stackover .outtag { transform: translate(-100%, -50%); margin-left: -17px; }
 
 /* 立体図の注記。上の「やりかた」の注記と同じ見た目にそろえます */
 /* 端末の記録を消す（2段階）------------------------------------
